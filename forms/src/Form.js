@@ -8,7 +8,10 @@ class Form extends React.Component {
     this.state = {
       name: "",
       reason: "",
-      formCompleted: false
+      diet: "",
+      country: "",
+      formCompleted: false,
+      formSubmitted: false
     }
   }
 
@@ -20,45 +23,75 @@ class Form extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault()
-    this.setState({formCompleted: true})
+    this.setState({
+      formCompleted: true
+    })
+  }
+
+
+  handleConfirm = (event) => {
+    event.preventDefault()
+    this.setState({
+      formSubmitted: true
+    })
   }
 
   render() {
+    const { name, birthday, reason, diet, formCompleted, formSubmitted, country } = this.state
+    if(!formSubmitted) {
     return (
-      <>
+        <>
         <h1>Mission to Mars Registration Form</h1>
-        <div>
-          <form onChange={this.handleChange}>
-            <label htmlFor="name" >Name</label>
-            <input name="name" type="text" placeholder="Full Name" value={this.state.name} id="name"/>
-            <label htmlFor="DOB"> Date Of Birth: </label>
-            <input type="date" id="dob" name="trip" value={this.state.trip} min="1900-01-01" max="2019-12-31" />
+          <div>
+            <form className="form" onChange={this.handleChange}>
+              <label htmlFor="name" >Name <strong><abbr title="required">*</abbr></strong>
+              </label>
+              <input name="name" type="text" placeholder="Full Name" value={name} id="name"/>
+              <label htmlFor="DOB"> Date Of Birth: </label>
+              <input type="date" id="dob" name="birthday" value={birthday} min="1900-01-01" max="2019-01-31" />
 
-            <label htmlFor="Country">Country</label>
-            <select onChange={this.handleChange} name="Countries">
-            {["", ...countries].map(country => (
-              <option value={country.name}>{country.name}</option>
-            ))}
-            </select>
+              <label htmlFor="Country">Country     <strong><abbr title="required">*</abbr></strong>
+</label>
+              <select name="country">
+              {["", ...countries].map(country => (
+                <option value={country.name}>{country.name}</option>
+              ))}
+              </select>
 
-            <label htmlFor="dietary">What do you want to Eat?</label>
-            <select name="diet">
-              <option value="omnivore">Omnivore</option>
-              <option value="vegeterian">Vegetarian</option>
-              <option value="vegan">Vegan</option>
-            </select>
+              <label htmlFor="dietary">What do you want to eat?</label>
+              <select name="diet" value={diet}>
+                <option value="omnivore">Omnivore</option>
+                <option value="vegeterian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+              </select>
 
-            <label htmlFor="yourReason">why do want to be a Mars Explorer?</label>
-            <input name="reason" placeholder="explain why we should select you!" type="text" id="reason" value={this.state.reason} />
+              <label htmlFor="yourReason">Why do want to be a Mars Explorer?</label>
+              <textarea rows='5' cols='25' wrap='soft' overflow='scroll'  name="reason" placeholder="explain why we should select you!" type="text" id="reason" value={reason} />
 
-            <button onSubmit={this.handleSubmit}>submit</button>
+                <button onClick={this.handleSubmit}>Submit</button>
+                <div className="formSubmit">
+                  <p>{formCompleted ? `
+                  Your name: ${name}
+                  DOB: ${birthday}
+                  Diet: ${diet}
+                  Reason: ${reason}
+                  Country: ${country}
+                  is the information correct?` : ""}</p>
+                </div>
+              </form>
+            </div>
 
-          </form>
-
-        </div>
-      </>
-    )
-  }
+            <button onClick={this.handleConfirm}>Confirm</button>
+            </>
+          )
+        } else {
+          return (
+            <>
+              <p id="pageConfirm">You have successfully submitted the application!</p>
+            </>
+          )
+        }
+    }
 }
 
 export default Form
