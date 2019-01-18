@@ -12,20 +12,35 @@ class Form extends React.Component {
       reason: "",
       diet: "",
       country: "",
+      formConfirm: false,
       formCompleted: false,
       formSubmitted: false,
       underwater: "",
       marital_status: "",
       stress_level: "",
       claustrophobic: "",
-      siblings: false,
-      parents: false,
-      grandparents: false
+      checkbox_disease: {
+        cancer: false,
+        heart_disease: false,
+        diabetes: false
+      },
+      education_other: "",
+      education: {
+        high_school: false,
+        associates: false,
+        bachelors: false,
+        masters: false,
+        phd: false,
+      },
+      family: {
+        siblings: false,
+        parents: false,
+        grandparents: false
+      }
     }
   }
 
   handleChange = (event) => {
-    debugger
     this.setState({
       [event.target.name]: event.target.value
     })
@@ -38,11 +53,22 @@ class Form extends React.Component {
     })
   }
 
-  // handleCheckboxChange(event) {
-  //   this.setState({
-  //     [event.target.name]: event.target.value
-  //   })
-  // }
+  handdleFormConfirm = (event) => {
+    event.preventDefault()
+    this.setState({
+      formConfirm: true
+    })
+  }
+
+  handleCheckboxChange = (event) => {
+    event.stopPropagation()
+    let checkedItems = this.state[event.target.name]
+    checkedItems[event.target.id] = event.target.checked
+    this.setState({
+      [event.target.name]: checkedItems
+    })
+  }
+
 
 
   handleConfirm = (event) => {
@@ -53,14 +79,12 @@ class Form extends React.Component {
   }
 
 
-
-
   render() {
-    const { name,  reason,  formCompleted, formSubmitted, diet, country, birthday } = this.state
+    const { name, family, reason, underwater, marital_status, stress_level, claustrophobic, formCompleted, formSubmitted, diet, country, birthday, checkbox_disease, education_other, education, formConfirm } = this.state;
 
 
 
-    if(!formSubmitted) {
+    if(!formConfirm) {
     return (
         <>
         <h1>Mission to Mars Registration Form</h1>
@@ -70,7 +94,6 @@ class Form extends React.Component {
             <label htmlFor="name" >Name <abbr title="required">*</abbr></label>
             <input name="name" type="text" placeholder="Full Name" value={name} id="name"/>
 
-            
 
             <Selects handleSelect={this.handleChange}
               birthday={this.state.birthday}
@@ -88,27 +111,53 @@ class Form extends React.Component {
               claustrophobic={this.state.claustrophobic}
               />
 
-              <Checkbox handleCheckboxChange={this.handleChange}
-                siblings={this.state.siblings}
-                parents={this.state.parents}
-                grandparents={this.state.grandparents}
+              <Checkbox
+              handleFollowUpQuestion={this.handleFollowUpQuestion}
+              handleCheckboxChange={this.handleCheckboxChange}
+              family={this.state.family}
+              checkbox_disease={this.state.checkbox_disease}
+              education={this.state.education}
+              education_other={this.state.educational_other}
               />
 
-                <button onClick={this.handleSubmit}>Submit</button>
-                <div className="formSubmit">
-                  <p>{formCompleted ? `
-                  Your name: ${name}
-                  DOB: ${birthday}
-                  Diet: ${diet}
-                  Reason: ${reason}
-                  Country: ${country}
-                  is the information correct?` : ""}</p>
-                </div>
+
+              <button onClick={this.handdleFormConfirm}>Submit</button>
+
+
               </form>
             </div>
 
-            {formCompleted ? <button onClick={this.handleConfirm}>Confirm</button> : ""}
             </>
+          )
+        } else if (!formSubmitted) {
+          return (
+
+            <div className="formSubmit">
+              <p>{formConfirm ? `
+                Your name: ${name}
+                DOB: ${birthday}
+                Diet: ${diet}
+                Reason: ${reason}
+                Country: ${country}
+                longevity: ${underwater}
+                Marital Status: ${marital_status}
+                family siblings: ${family.siblings}
+                parents: ${family.parents}
+                grandparents: ${family.grandparents}
+                stress_level: ${stress_level}
+                claustrophobic: ${claustrophobic}
+                do you have cancer: ${checkbox_disease.cancer}
+                Heart Disease: ${checkbox_disease.heart_disease}
+                Diabetes: ${checkbox_disease.diabetes}
+                Other education: ${education_other}
+                Do you have an associate: ${education.associates}
+                batchelor: ${education.bachelors}
+                masters: ${education.masters}
+                PhD: ${education.phd}
+                is the information correct?` : ""}
+              </p>
+              {formConfirm ? <button onClick={this.handleConfirm}>Confirm</button> : ""}
+            </div>
           )
         } else {
           return (
